@@ -9,18 +9,27 @@
   },
   "license": "MIT",
   "author": "Federico Moretti <hello@federicomoretti.it> (https://federicomoretti.it)",
+  "main": "./bin/index.js",
+  "bin": {
+    "create-lambda-app": "./bin/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fedtti/create-lambda-app.git"
   },
   "scripts": {
+    "build": "tsc -b",
+    "clean": "shx rm -fr ./bin/* ./node_modules/*",
     "postinstall": "npx husky init && rm .husky/pre-commit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "start": "node ./bin/index.js"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@types/node": "^24.9.1",
     "husky": "^9.1.7",
+    "shx": "^0.4.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
