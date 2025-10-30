@@ -7,7 +7,8 @@ import {
 
 const init = async (): Promise<void> => {
   try {
-    await WriteFile('serverless.yml', ''); // 
+    const file = await WriteFile('serverless.yml', 'prova'); // 
+    
   } catch (error) {
     console.error(chalk.red.bold(`\n\r${(error as Error).message}`));
     process.exit(1);
