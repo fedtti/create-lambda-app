@@ -20,7 +20,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "shx rm -fr ./bin/* ./node_modules/*",
-    "postinstall": "npx husky init && rm .husky/pre-commit",
+    "postinstall": "npx husky init && shx rm .husky/pre-commit",
     "prepare": "husky",
     "start": "node ./bin/index.js"
   },
