@@ -1,4 +1,5 @@
 import {
+  //copyFileSync,
   existsSync,
   mkdirSync,
   writeFileSync
@@ -14,12 +15,10 @@ export const MakeDirectory = (verbose: boolean = false, name: string): void => {
     if (!existsSync(`./${name}`)) {
       const folder = mkdirSync(`./${name}`);
       if (!!verbose) {
-        console.info(`✅ Directory './${name}' has been made.`);
+        console.info(`✅ Directory './${name}' has been successfully made.`);
       }
     } else {
-      if (!!verbose) {
-        console.warn(`✅ Directory './${name}' already exist, skipping…`);
-      }
+      console.warn(`⚠️ Directory './${name}' already exist, skipping…`);
     }
   } catch (error) {
     throw new Error(`❌ ${(error as Error).message}.`);
@@ -36,9 +35,20 @@ export const WriteFile = (verbose: boolean = false, path: string, content: strin
   try {
     const file = writeFileSync(path, content);
     if (!!verbose) {
-      console.info(`✅ File '${path}' has been written.`);
+      console.info(`✅ File '${path}' has been successfully written.`);
     }
   } catch (error) {
     throw new Error(`❌ ${(error as Error).message}.`);
   }
 };
+
+// export const CopyFile = (verbose: boolean = false, source: string, destination: string): void => {
+//   try {
+//     const file = copyFileSync(source, destination);
+//     if (!!verbose) {
+//       console.info(`✅ File has been successfully copied from '${source}' to '${destination}'.`);
+//     }
+//   } catch (error) {
+//     throw new Error(`❌ ${(error as Error).message}.`);
+//   }
+// };

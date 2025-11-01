@@ -1,0 +1,17 @@
+{
+  "name": " ",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "license": "",
+  "author": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "shx rm -fr ./dist/* ./node_modules/*",
+    "deploy": "sls deploy",
+    "postinstall": "npx husky init && shx rm .husky/pre-commit",
+    "prepare": "husky",
+    "start": "node ./dist/index.js"
+  }
+}
