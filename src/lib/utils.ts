@@ -1,32 +1,23 @@
-import { Command } from 'commander';
 import {
   existsSync,
   mkdirSync,
   writeFileSync
 } from 'fs';
 
-const program: Command = new Command();
-
-program
-  .version('Create Lambda App 1.0.0', '-V, --version')
-  .option('-v, --verbose', '')
-  .parse(process.argv);
-
-const options = program.opts();
-
 /**
  * Make a directory in the filesystem.
+ * @param {boolean} verbose - If `true`, log level is set as verbose.
  * @param {string} name - Directory name.
  */
-export const MakeDirectory = (name: string): void => {
+export const MakeDirectory = (verbose: boolean = false, name: string): void => {
   try {
     if (!existsSync(`./${name}`)) {
       const folder = mkdirSync(`./${name}`);
-      if (!!options.verbose) {
+      if (!!verbose) {
         console.info(`✅ Directory './${name}' has been made.`);
       }
     } else {
-      if (!!options.verbose) {
+      if (!!verbose) {
         console.warn(`✅ Directory './${name}' already exist, skipping…`);
       }
     }
@@ -37,13 +28,14 @@ export const MakeDirectory = (name: string): void => {
 
 /**
  * Write a file to the filesystem.
+ * @param {boolean} verbose - If `true`, log level is set as verbose.
  * @param {string} path - File name.
  * @param {string} content - File content.
  */
-export const WriteFile = (path: string, content: string): void => {
+export const WriteFile = (verbose: boolean = false, path: string, content: string): void => {
   try {
     const file = writeFileSync(path, content);
-    if (!!options.verbose) {
+    if (!!verbose) {
       console.info(`✅ File '${path}' has been written.`);
     }
   } catch (error) {

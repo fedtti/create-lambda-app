@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 
+import { Command } from 'commander';
 import chalk from 'chalk';
 import { input } from '@inquirer/prompts';
 import { 
   MakeDirectory,
   WriteFile
 } from './lib/utils.js';
+
+const program: Command = new Command();
+
+program
+  .version('Create Lambda App 1.0.0', '-V, --version')
+  .option('-v, --verbose', '')
+  .parse(process.argv);
+
+const options = program.opts(); // List of specified arguments.
 
 /**
  * Check whether the input is valid or not.
@@ -40,10 +50,10 @@ const init = async (): Promise<void> => {
       validate: validateProjectName
     });
     
-    MakeDirectory(sanitizeProjectName('directory', projectName));
-    WriteFile(`./${sanitizeProjectName('directory', projectName)}/serverless.yml`, ''); // TODO: @fedtti - Add configuration content.
+    MakeDirectory(options.verbose, sanitizeProjectName('directory', projectName));
+    WriteFile(options.verbose, `./${sanitizeProjectName('directory', projectName)}/serverless.yml`, ''); // TODO: @fedtti - Add configuration content.
     
-    MakeDirectory(`${sanitizeProjectName('directory', projectName)}/src`);
+    MakeDirectory(options.verbose, `${sanitizeProjectName('directory', projectName)}/src`);
     process.exit(0);
   } catch (error) {
     console.error(`\n\r${(error as Error).message}`);
