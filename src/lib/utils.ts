@@ -1,8 +1,18 @@
+import { Command } from 'commander';
 import {
   existsSync,
   mkdirSync,
   writeFileSync
 } from 'fs';
+
+const program: Command = new Command();
+
+program
+  .version('Create Lambda App 1.0.0', '-V, --version')
+  .option('-v, --verbose', '')
+  .parse(process.argv);
+
+const options = program.opts();
 
 /**
  * Make a directory in the filesystem.
@@ -12,11 +22,11 @@ export const MakeDirectory = (name: string): void => {
   try {
     if (!existsSync(`./${name}`)) {
       const folder = mkdirSync(`./${name}`);
-      if (!!process.argv && (process.argv.includes('-v') || process.argv.includes('--verbose'))) {
+      if (!!options.verbose) {
         console.info(`✅ Directory './${name}' has been made.`);
       }
     } else {
-      if (!!process.argv && (process.argv.includes('-v') || process.argv.includes('--verbose'))) {
+      if (!!options.verbose) {
         console.warn(`✅ Directory './${name}' already exist, skipping…`);
       }
     }
@@ -33,7 +43,7 @@ export const MakeDirectory = (name: string): void => {
 export const WriteFile = (path: string, content: string): void => {
   try {
     const file = writeFileSync(path, content);
-    if (!!process.argv && (process.argv.includes('-v') || process.argv.includes('--verbose'))) {
+    if (!!options.verbose) {
       console.info(`✅ File '${path}' has been written.`);
     }
   } catch (error) {
