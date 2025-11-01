@@ -2,7 +2,8 @@
 
 import { Command } from 'commander';
 import { input } from '@inquirer/prompts';
-import { 
+import {
+  CopyFile,
   MakeDirectory,
   WriteFile
 } from './lib/utils.js';
@@ -22,7 +23,7 @@ const options = program.opts(); // List of specified arguments.
  * @returns {boolean}
  */
 const validateProjectName = (input: string): boolean => {
-  if (!!input && !!(/^[A-Za-z][A-Za-z0-9_-]*$/g.test(input))) { // Projects name cannot start with either a digit or a hyphen and contain symbols different from hyphens or underscores.
+  if (!!input && !!(/^[A-Za-z][A-Za-z0-9_-]*$/g.test(input))) { // Projects’ names cannot start with a digit, a hyphen, or an underscore and contain symbols different from hyphens or underscores.
     return true;
   } else {
     return false;
@@ -51,23 +52,38 @@ const init = async (): Promise<void> => {
     
     MakeDirectory(options.verbose, sanitizeProjectName('directory', projectName)); //
 
+    CopyFile(options.verbose, './.gitignore', `./${sanitizeProjectName('directory', projectName)}/.gitignore`);
+    CopyFile(options.verbose, './.nvmrc', `./${sanitizeProjectName('directory', projectName)}/.nvmrc`);
+
     const packageJson = {
-      name: projectName,
-      version: "1.0.0",
-      description: "",
-      keywords: [],
-      license: "",
-      author: "",
-      main: "./dist/index.js",
-      scripts: {
-        build: "tsc -b",
-        clean: "shx rm -fr ./dist/* ./node_modules/*",
-        deploy: "sls deploy",
-        postinstall: "npx husky init && shx rm .husky/pre-commit",
-        prepare: "husky",
-        start: "node ./dist/index.js"
+      "name": `${sanitizeProjectName('file', projectName)}`,
+      "version": "1.0.0",
+      "description": "",
+      "keywords": [
+        "aws",
+        "aws-lambda"
+      ],
+      "license": "",
+      "author": "",
+      "main": "./dist/index.js",
+      "scripts": {
+        "build": "tsc -b",
+        "clean": "shx rm -fr ./dist/* ./node_modules/*",
+        "deploy": "sls deploy",
+        "postinstall": "npx husky init && shx rm .husky/pre-commit",
+        "prepare": "husky",
+        "start": "node ./dist/index.js"
       },
-      type: "module"
+      "devDependencies": {
+        "@commitlint/cli": "^20.1.0",
+        "@commitlint/config-conventional": "^20.0.0",
+        "@types/aws-lambda": "^8.10.145",
+        "@types/node": "^24.9.1",
+        "husky": "^9.1.7",
+        "shx": "^0.4.0",
+        "typescript": "^5.9.3"
+      },
+      "type": "module"
     };
 
     WriteFile(options.verbose, `./${sanitizeProjectName('directory', projectName)}/package.json`, JSON.stringify(packageJson, null, 2) + '\n'); //
@@ -75,9 +91,7 @@ const init = async (): Promise<void> => {
     const serverlessYml = `# serverless.yml`;
 
     WriteFile(options.verbose, `./${sanitizeProjectName('directory', projectName)}/serverless.yml`, serverlessYml); //
-    
     MakeDirectory(options.verbose, `${sanitizeProjectName('directory', projectName)}/src`); //
-
 
     process.exit(0);
   } catch (error) {

@@ -1,5 +1,5 @@
 import {
-  //copyFileSync,
+  copyFileSync,
   existsSync,
   mkdirSync,
   writeFileSync
@@ -42,13 +42,19 @@ export const WriteFile = (verbose: boolean = false, path: string, content: strin
   }
 };
 
-// export const CopyFile = (verbose: boolean = false, source: string, destination: string): void => {
-//   try {
-//     const file = copyFileSync(source, destination);
-//     if (!!verbose) {
-//       console.info(`✅ File has been successfully copied from '${source}' to '${destination}'.`);
-//     }
-//   } catch (error) {
-//     throw new Error(`❌ ${(error as Error).message}.`);
-//   }
-// };
+/**
+ * Copy a file from a source to a destination.
+ * @param {boolean} verbose - If `true`, log level is set as verbose.
+ * @param {string} source - File source.
+ * @param {string} destination - File destination.
+ */
+export const CopyFile = (verbose: boolean = false, source: string, destination: string): void => {
+  try {
+    const file = copyFileSync(source, destination);
+    if (!!verbose) {
+      console.info(`✅ File has been successfully copied from '${source}' to '${destination}'.`);
+    }
+  } catch (error) {
+    throw new Error(`❌ ${(error as Error).message}.`);
+  }
+};
