@@ -1,9 +1,26 @@
+import { execSync } from 'child_process';
 import {
   copyFileSync,
   existsSync,
   mkdirSync,
   writeFileSync
 } from 'fs';
+
+/**
+ * 
+ * @param {boolean} verbose - If `true`, log level is set as verbose.
+ * @param {string} command -
+ */
+export const Execute = (verbose: boolean = false, name: string): void => {
+  try {
+    execSync(name);
+    if (!!verbose) {
+      console.info(`✅ Command '${name}' has been successfully executed.`);
+    }
+  } catch (error) {
+    throw new Error(`❌ ${(error as Error).message}.`);
+  }
+};
 
 /**
  * Make a directory in the filesystem.
@@ -13,7 +30,7 @@ import {
 export const MakeDirectory = (verbose: boolean = false, name: string): void => {
   try {
     if (!existsSync(`./${name}`)) {
-      const folder = mkdirSync(`./${name}`);
+      mkdirSync(`./${name}`);
       if (!!verbose) {
         console.info(`✅ Directory './${name}' has been successfully made.`);
       }
@@ -33,7 +50,7 @@ export const MakeDirectory = (verbose: boolean = false, name: string): void => {
  */
 export const WriteFile = (verbose: boolean = false, path: string, content: string): void => {
   try {
-    const file = writeFileSync(path, content);
+    writeFileSync(path, content);
     if (!!verbose) {
       console.info(`✅ File '${path}' has been successfully written.`);
     }
@@ -50,7 +67,7 @@ export const WriteFile = (verbose: boolean = false, path: string, content: strin
  */
 export const CopyFile = (verbose: boolean = false, source: string, destination: string): void => {
   try {
-    const file = copyFileSync(source, destination);
+    copyFileSync(source, destination);
     if (!!verbose) {
       console.info(`✅ File has been successfully copied from '${source}' to '${destination}'.`);
     }

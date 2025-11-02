@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { input } from '@inquirer/prompts';
 import {
   CopyFile,
+  Execute,
   MakeDirectory,
   WriteFile
 } from './lib/utils.js';
@@ -52,7 +53,12 @@ const init = async (): Promise<void> => {
     
     MakeDirectory(options.verbose, sanitizeProjectName('directory', projectName)); //
 
+    Execute(options.verbose, `cd ${sanitizeProjectName('directory', projectName)}/ && git init`);
+
     CopyFile(options.verbose, './.gitignore', `./${sanitizeProjectName('directory', projectName)}/.gitignore`);
+
+    Execute(options.verbose, `cd ${sanitizeProjectName('directory', projectName)}/ && npm init -y`)
+
     CopyFile(options.verbose, './.nvmrc', `./${sanitizeProjectName('directory', projectName)}/.nvmrc`);
 
     const packageJson = {
