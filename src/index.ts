@@ -32,6 +32,19 @@ const validateName = (input: string): boolean => {
 };
 
 /**
+ * Check whether the input is valid or not.
+ * @param {string} input - The author name.
+ * @returns {boolean}
+ */
+const validateAuthor = (input: string): boolean => {
+  if (!!input && !!(/^[A-Za-z]+[\s]*[A-Za-z]*$/gi.test(input))) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
  * Sanitize the input to use it in a filesystem.
  * @param {string} input - The project name.
  * @returns {string}
@@ -80,8 +93,13 @@ const init = async (): Promise<void> => {
         {
           "name": "UNLICENSED",
           "value": "UNLICENSED"
-        },
+        }
       ]
+    });
+
+    const author = await input({
+      message: 'Author:',
+      validate: validateAuthor
     });
 
     const packageJson = {
@@ -93,7 +111,7 @@ const init = async (): Promise<void> => {
         "aws-lambda"
       ],
       "license": `${license}`,
-      "author": "",
+      "author": `${author}`,
       "main": "./dist/index.js",
       "scripts": {
         "build": "tsc -b",
