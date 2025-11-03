@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { input } from '@inquirer/prompts';
+import { input, select } from '@inquirer/prompts';
 import {
   CopyFile,
   Execute,
@@ -23,7 +23,7 @@ const options = program.opts(); // List of specified arguments.
  * @param {string} input - The project name.
  * @returns {boolean}
  */
-const validateProjectName = (input: string): boolean => {
+const validateName = (input: string): boolean => {
   if (!!input && !!(/^[A-Za-z][A-Za-z0-9_-]*$/g.test(input))) { // Projects’ names cannot start with a digit, a hyphen, or an underscore and contain symbols different from hyphens or underscores.
     return true;
   } else {
@@ -36,7 +36,7 @@ const validateProjectName = (input: string): boolean => {
  * @param {string} input - The project name.
  * @returns {string}
  */
-const sanitizeProjectName = (scope: string = 'file', input: string): string => {
+const sanitizeName = (scope: string = 'file', input: string): string => {
   input = (scope === 'directory') ? input.replace('-', '_').toLowerCase() : input.toLowerCase();
   return input;
 };
@@ -46,13 +46,13 @@ const sanitizeProjectName = (scope: string = 'file', input: string): string => {
  */
 const init = async (): Promise<void> => {
   try {
-    const projectName = await input({
-      message: 'Project Name:',
-      validate: validateProjectName
+    const name = await input({
+      message: 'Name:',
+      validate: validateName
     });
 
-    const directory: string = sanitizeProjectName('directory', projectName);
-    
+    const directory: string = sanitizeName('directory', name);
+
     MakeDirectory(options.verbose, directory); //
     CopyFile(options.verbose, './.nvmrc', `./${directory}/.nvmrc`); // 
     MakeDirectory(options.verbose, `${directory}/src`); //
@@ -68,19 +68,31 @@ const init = async (): Promise<void> => {
      */
     Execute(options.verbose, `cd ./${directory}/ && npm init -y`);
 
-    const file: string = sanitizeProjectName('file', projectName);
+    const file: string = sanitizeName('file', name);
 
-    // TODO: @fedtti - Ask for npm options.
+    const description = await input({
+      message: 'Description:'
+    });
+
+    const license = await select({
+      message: 'License:',
+      choices: [
+        {
+          "name": "UNLICENSED",
+          "value": "UNLICENSED"
+        },
+      ]
+    });
 
     const packageJson = {
       "name": `${file}`,
       "version": "1.0.0",
-      "description": "",
+      "description": `${description}`,
       "keywords": [
         "aws",
         "aws-lambda"
       ],
-      "license": "",
+      "license": `${license}`,
       "author": "",
       "main": "./dist/index.js",
       "scripts": {
