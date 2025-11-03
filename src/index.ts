@@ -58,17 +58,19 @@ const init = async (): Promise<void> => {
     MakeDirectory(options.verbose, `${directory}/src`); //
 
     /**
-     * Initialize, configure, and customize Git.
+     * Initialize and configure Git.
      */
     Execute(options.verbose, `cd ./${directory}/ && git init`);
     CopyFile(options.verbose, './.gitignore', `./${directory}/.gitignore`);
 
     /**
-     * Initialize, configure, and customize NPM.
+     * Initialize and configure npm.
      */
     Execute(options.verbose, `cd ./${directory}/ && npm init -y`);
 
     const file: string = sanitizeProjectName('file', projectName);
+
+    // TODO: @fedtti - Ask for npm options.
 
     const packageJson = {
       "name": `${file}`,
@@ -113,16 +115,21 @@ const init = async (): Promise<void> => {
     Execute(options.verbose, `cd ./${directory}/ && npm i --save-dev ${devDependencies.join(' ')} && npm i --save ${dependencies.join(' ')}`);
 
     /**
-     * Initialize, configure, and customize Serverless.
+     * Initialize and configure Serverless.
      */
+
+    // TODO: @fedtti - Ask for Serverless options.
+
     const serverlessYml = `# serverless.yml`;
 
     WriteFile(options.verbose, `./${directory}/serverless.yml`, serverlessYml);
 
     /**
-     * Initialize, configure, and customize TypeScript.
+     * Initialize and configure TypeScript.
      */
     Execute(options.verbose, `cd ./${directory}/ && npx tsc --init`);
+
+    // TODO: @fedtti - Ask for TypeScript options.
 
     process.exit(0);
   } catch (error) {
