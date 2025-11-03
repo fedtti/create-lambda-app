@@ -50,19 +50,26 @@ const init = async (): Promise<void> => {
       message: 'Project Name:',
       validate: validateProjectName
     });
+
+    const directory: string = sanitizeProjectName('directory', projectName);
+    const file: string = sanitizeProjectName('file', projectName);
     
-    MakeDirectory(options.verbose, sanitizeProjectName('directory', projectName)); //
+    MakeDirectory(options.verbose, directory); //
 
-    Execute(options.verbose, `cd ${sanitizeProjectName('directory', projectName)}/ && git init`);
+    /**
+     * Initialize, configure, and customize Git.
+     */
+    Execute(options.verbose, `cd ./${directory}/ && git init`);
+    CopyFile(options.verbose, './.gitignore', `./${directory}/.gitignore`);
 
-    CopyFile(options.verbose, './.gitignore', `./${sanitizeProjectName('directory', projectName)}/.gitignore`);
-
-    Execute(options.verbose, `cd ${sanitizeProjectName('directory', projectName)}/ && npm init -y`)
-
-    CopyFile(options.verbose, './.nvmrc', `./${sanitizeProjectName('directory', projectName)}/.nvmrc`);
+    /**
+     * Initialize, configure, and customize NPM.
+     */
+    Execute(options.verbose, `cd ./${directory}/ && npm init -y`);
+    CopyFile(options.verbose, './.nvmrc', `./${directory}/.nvmrc`);
 
     const packageJson = {
-      "name": `${sanitizeProjectName('file', projectName)}`,
+      "name": `${file}`,
       "version": "1.0.0",
       "description": "",
       "keywords": [
@@ -92,12 +99,22 @@ const init = async (): Promise<void> => {
       "type": "module"
     };
 
-    WriteFile(options.verbose, `./${sanitizeProjectName('directory', projectName)}/package.json`, JSON.stringify(packageJson, null, 2) + '\n'); //
+    WriteFile(options.verbose, `./${directory}/package.json`, JSON.stringify(packageJson, null, 2) + '\n');
+    Execute(options.verbose, `cd ./${directory}/ && nvm use 22 && npm i`);
 
+    /**
+     * Initialize, configure, and customize Serverless.
+     */
     const serverlessYml = `# serverless.yml`;
 
-    WriteFile(options.verbose, `./${sanitizeProjectName('directory', projectName)}/serverless.yml`, serverlessYml); //
-    MakeDirectory(options.verbose, `${sanitizeProjectName('directory', projectName)}/src`); //
+    WriteFile(options.verbose, `./${directory}/serverless.yml`, serverlessYml);
+
+    /**
+     * Initialize, configure, and customize TypeScript.
+     */
+    Execute(options.verbose, `cd ./${directory}/ && npx tsc --init`);
+
+    MakeDirectory(options.verbose, `${directory}/src`); //
 
     process.exit(0);
   } catch (error) {
