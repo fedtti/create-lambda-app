@@ -52,9 +52,10 @@ const init = async (): Promise<void> => {
     });
 
     const directory: string = sanitizeProjectName('directory', projectName);
-    const file: string = sanitizeProjectName('file', projectName);
     
     MakeDirectory(options.verbose, directory); //
+    CopyFile(options.verbose, './.nvmrc', `./${directory}/.nvmrc`); // 
+    MakeDirectory(options.verbose, `${directory}/src`); //
 
     /**
      * Initialize, configure, and customize Git.
@@ -66,7 +67,8 @@ const init = async (): Promise<void> => {
      * Initialize, configure, and customize NPM.
      */
     Execute(options.verbose, `cd ./${directory}/ && npm init -y`);
-    CopyFile(options.verbose, './.nvmrc', `./${directory}/.nvmrc`);
+
+    const file: string = sanitizeProjectName('file', projectName);
 
     const packageJson = {
       "name": `${file}`,
@@ -121,8 +123,6 @@ const init = async (): Promise<void> => {
      * Initialize, configure, and customize TypeScript.
      */
     Execute(options.verbose, `cd ./${directory}/ && npx tsc --init`);
-
-    MakeDirectory(options.verbose, `${directory}/src`); //
 
     process.exit(0);
   } catch (error) {
