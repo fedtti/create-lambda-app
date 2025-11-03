@@ -87,20 +87,28 @@ const init = async (): Promise<void> => {
         "prepare": "husky",
         "start": "node ./dist/index.js"
       },
-      "devDependencies": {
-        "@commitlint/cli": "^20.1.0",
-        "@commitlint/config-conventional": "^20.0.0",
-        "@types/aws-lambda": "^8.10.145",
-        "@types/node": "^24.9.1",
-        "husky": "^9.1.7",
-        "shx": "^0.4.0",
-        "typescript": "^5.9.3"
-      },
+      "devDependencies": {},
+      "dependencies": {},
       "type": "module"
     };
 
     WriteFile(options.verbose, `./${directory}/package.json`, JSON.stringify(packageJson, null, 2) + '\n');
-    Execute(options.verbose, `cd ./${directory}/ && nvm use 22 && npm i`);
+
+    const devDependencies: string[] = [
+      '@commitlint/cli',
+      '@commitlint/config-conventional',
+      '@types/aws-lambda',
+      '@types/node',
+      'husky',
+      'shx',
+      'typescript'
+    ];
+
+    const dependencies: string[] = [
+      'serverless-http'
+    ];
+
+    Execute(options.verbose, `cd ./${directory}/ && npm i --save-dev ${devDependencies.join(' ')} && npm i --save ${dependencies.join(' ')}`);
 
     /**
      * Initialize, configure, and customize Serverless.
