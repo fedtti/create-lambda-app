@@ -1,6 +1,6 @@
 {
   "name": "@fedtti/create-lambda-app",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha",
   "description": "Create Lambda App",
   "keywords": [],
   "homepage": "https://github.com/fedtti/create-lambda-app#readme",

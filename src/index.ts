@@ -23,35 +23,17 @@ const options = program.opts(); // List of specified arguments.
  * @param {string} input - The project name.
  * @returns {boolean}
  */
-const validateName = (input: string): boolean => {
-  if (!!input && !!(/^[A-Za-z][A-Za-z0-9_-]*$/g.test(input))) { // Projects’ names cannot start with a digit, a hyphen, or an underscore and contain symbols different from hyphens or underscores.
-    return true;
-  } else {
-    return false;
-  }
+const validateInput = (input: string): boolean => {
+  return (!!input && !!(/^[A-Za-z][A-Za-z0-9_-]*$/g.test(input))) ? true : false; // TODO: @fedtti - Improve validation.
 };
-
-/**
- * Check whether the input is valid or not.
- * @param {string} input - The author name.
- * @returns {boolean}
- */
-const validateAuthor = (input: string): boolean => {
-  if (!!input && !!(/^[A-Za-z]+[\s]*[A-Za-z]*$/gi.test(input))) {
-    return true;
-  } else {
-    return false;
-  }
-}
 
 /**
  * Sanitize the input to use it in a filesystem.
  * @param {string} input - The project name.
  * @returns {string}
  */
-const sanitizeName = (scope: string = 'file', input: string): string => {
-  input = (scope === 'directory') ? input.replace('-', '_').toLowerCase() : input.toLowerCase();
-  return input;
+const sanitizeInput = (scope: string = 'file', input: string): string => {
+  return (scope === 'directory') ? input.replace('-', '_').toLowerCase() : input.toLowerCase();
 };
 
 /**
@@ -59,12 +41,17 @@ const sanitizeName = (scope: string = 'file', input: string): string => {
  */
 const init = async (): Promise<void> => {
   try {
-    const name = await input({
-      message: 'Name:',
-      validate: validateName
+    const organization = await input({
+      message: 'Organization:',
+      validate: validateInput
     });
 
-    const directory: string = sanitizeName('directory', name);
+    const name = await input({
+      message: 'Name:',
+      validate: validateInput
+    });
+
+    const directory: string = sanitizeInput('directory', name);
 
     MakeDirectory(options.verbose, directory); //
     CopyFile(options.verbose, './.nvmrc', `./${directory}/.nvmrc`); // 
@@ -81,7 +68,7 @@ const init = async (): Promise<void> => {
      */
     Execute(options.verbose, `cd ./${directory}/ && npm init -y`);
 
-    const file: string = sanitizeName('file', name);
+    const file: string = sanitizeInput('file', name);
 
     const description = await input({
       message: 'Description:'
@@ -93,18 +80,21 @@ const init = async (): Promise<void> => {
         {
           "name": "UNLICENSED",
           "value": "UNLICENSED"
+        },
+        {
+          "name": "MIT",
+          "value": "MIT"
         }
       ]
     });
 
     const author = await input({
-      message: 'Author:',
-      validate: validateAuthor
+      message: 'Author:'
     });
 
     const packageJson = {
-      "name": `${file}`,
-      "version": "1.0.0",
+      "name": `${!!organization ? '@' + organization + '/' : ''}${file}`,
+      "version": "1.0.0-alpha",
       "description": `${description}`,
       "keywords": [
         "aws",
@@ -142,22 +132,24 @@ const init = async (): Promise<void> => {
       'serverless-http'
     ];
 
-    Execute(options.verbose, `cd ./${directory}/ && npm i --save-dev ${devDependencies.join(' ')} && npm i --save ${dependencies.join(' ')}`);
+    Execute(options.verbose, `cd ./${directory}/ && npm i --save-dev ${devDependencies.join(' ')} && npm i --save ${dependencies.join(' ')} && npm i`);
+
+    CopyFile(options.verbose, './.husky/commit-msg', `./${directory}/.husky/commit-msg`);
+    CopyFile(options.verbose, './commitlint.config.ts', `./${directory}/commitlint.config.ts`);
 
     /**
-     * Initialize and configure Serverless.
+     * Configure Serverless.
      */
 
     // TODO: @fedtti - Ask for Serverless options.
 
-    const serverlessYml = `# serverless.yml`;
+    const serverlessYml = `# serverless.yml\n\n`;
 
     WriteFile(options.verbose, `./${directory}/serverless.yml`, serverlessYml);
 
     /**
-     * Initialize and configure TypeScript.
+     * Configure TypeScript.
      */
-    Execute(options.verbose, `cd ./${directory}/ && npx tsc --init`);
 
     // TODO: @fedtti - Ask for TypeScript options.
 
