@@ -7,9 +7,9 @@ import {
 } from 'fs';
 
 /**
- * 
+ * Execute a shell command.
  * @param {boolean} verbose - If `true`, log level is set as verbose.
- * @param {string} command -
+ * @param {string} name - Command name.
  */
 export const Execute = (verbose: boolean = false, name: string): void => {
   try {
